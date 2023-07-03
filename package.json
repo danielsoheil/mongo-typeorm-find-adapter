@@ -1,0 +1,22 @@
+{
+  "name": "typeorm-dbsqp",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielsoheil/typeorm-dbsqp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielsoheil/typeorm-dbsqp/issues"
+  },
+  "homepage": "https://github.com/danielsoheil/typeorm-dbsqp#readme",
+  "dependencies": {
+    "jest": "^29.5.0"
+  }
+}
