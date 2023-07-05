@@ -9,9 +9,9 @@ assert(DB_URL, "DB_URL env is required");
 const AppDataSource = new DataSource({
   type: "postgres",
   url: DB_URL,
-  synchronize: true,
+  synchronize: false,
   logging: DB_ENABLE_LOGGING === "true",
-  dropSchema: DB_DROP_SCHEMA === "true",
+  dropSchema: true,
   entities: [User],
   subscribers: [],
   migrations: ["migrations/*.ts"],

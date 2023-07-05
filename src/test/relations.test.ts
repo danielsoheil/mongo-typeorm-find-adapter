@@ -1,11 +1,16 @@
-import { it, expect, beforeEach } from "@jest/globals";
+import { it, expect, beforeEach, afterEach } from "@jest/globals";
 import { ReadQueryBuilder } from "../index";
 import { User, UserFactory } from "./models/User";
 import AppDataSource from "./DataSource";
 
 beforeEach(async () => {
   await AppDataSource.initialize();
+  await AppDataSource.synchronize();
 });
+
+afterEach(async () => {
+  await AppDataSource.destroy();
+})
 
 it("should filter on one level relation", async function () {
   const Users = AppDataSource.getRepository(User);
