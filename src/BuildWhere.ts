@@ -11,7 +11,7 @@ const generateKey = async () => {
 
 export const BuildWhere = async <T>(
   where: WhereStructure<T>,
-  changeField: (field: string) => string = (f) => f,
+  onField: (field: string) => string,
   params = {},
 ): Promise<[string, object]> => {
   const key = Object.keys(where)[0];
@@ -22,11 +22,7 @@ export const BuildWhere = async <T>(
     case '$and': {
       const sqlFilters: string[] = [];
       for (const filter of value) {
-        const [sql, anotherParams] = await BuildWhere(
-          filter,
-          changeField,
-          params,
-        );
+        const [sql, anotherParams] = await BuildWhere(filter, onField, params);
         if (sql.length) sqlFilters.push(sql);
         params = { ...params, ...anotherParams };
       }
@@ -35,11 +31,7 @@ export const BuildWhere = async <T>(
     case '$or': {
       const sqlFilters: string[] = [];
       for (const filter of value) {
-        const [sql, anotherParams] = await BuildWhere(
-          filter,
-          changeField,
-          params,
-        );
+        const [sql, anotherParams] = await BuildWhere(filter, onField, params);
         if (sql.length) sqlFilters.push(sql);
         params = { ...params, ...anotherParams };
       }
@@ -54,9 +46,9 @@ export const BuildWhere = async <T>(
       return [`like :${paramkey}`, { [paramkey]: value }];
     }
     default: {
-      const [sql, anotherParams] = await BuildWhere(value, changeField, params);
+      const [sql, anotherParams] = await BuildWhere(value, onField, params);
 
-      return [`((${changeField(key)}) ${sql})`, anotherParams];
+      return [`((${onField(key)}) ${sql})`, anotherParams];
     }
   }
 };
