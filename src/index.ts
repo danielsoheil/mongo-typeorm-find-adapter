@@ -47,39 +47,24 @@ export class ReadQueryBuilder<T extends ObjectLiteral> {
       take: limit,
     });
 
-    function renameKey(
-      obj: { [key: string]: unknown },
-      oldKey: string,
-      newKey: string,
-    ) {
-      // Check if old key = new key
-      if (oldKey !== newKey) {
-        // setting new key
-        obj[newKey] = obj[oldKey];
-
-        // Delete old key
-        delete obj[oldKey];
-      }
-    }
-
     const joinAlias = (alias: string, propertyPath: string) =>
       alias + '_' + propertyPath.replace('.', '_');
 
-    const makeSomeChange = (key: string) => {
-      key = `entity.${key}`;
-      const splitedKey = key.split('.');
+    const onField = (field: string) => {
+      field = `entity.${field}`;
+      const splitedField = field.split('.');
 
       // if we have relation
-      if (splitedKey.length > 1) {
+      if (splitedField.length > 1) {
         // generete the alias like typeorm
         let alias: string | undefined;
-        for (const index in splitedKey) {
+        for (const index in splitedField) {
           const Index = parseInt(index);
           const nextIndex = parseInt(index) + 1;
-          if (Index <= splitedKey.length - 2) {
-            alias ??= splitedKey[index];
-            const propertyPath = splitedKey[nextIndex];
-            if (Index == splitedKey.length - 2) {
+          if (Index <= splitedField.length - 2) {
+            alias ??= splitedField[index];
+            const propertyPath = splitedField[nextIndex];
+            if (Index == splitedField.length - 2) {
               alias += '.' + propertyPath;
             } else {
               alias = DriverUtils.buildAlias(
@@ -91,13 +76,13 @@ export class ReadQueryBuilder<T extends ObjectLiteral> {
             }
           }
         }
-        if (alias) key = alias;
+        if (alias) field = alias;
       }
 
-      return key;
+      return field;
     };
 
-    const [sql, params] = await BuildWhere(this.#where, makeSomeChange);
+    const [sql, params] = await BuildWhere(this.#where, onField);
     qb.where(sql, params);
 
     return qb.getManyAndCount();
