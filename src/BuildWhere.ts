@@ -56,6 +56,4 @@ export const BuildWhere = async <T>(
       }
     }
   }
-
-  return ["", {}];
 };
