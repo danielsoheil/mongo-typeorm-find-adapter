@@ -6,42 +6,50 @@ export type WhereStructure<T> =
   | object;
 
 const generateKey = async () => {
-  return (await import("crypto")).randomBytes(20).toString("hex").slice(0, 10);
+  return (await import('crypto')).randomBytes(20).toString('hex').slice(0, 10);
 };
 
 export const BuildWhere = async <T>(
   where: WhereStructure<T>,
   changeField: (field: string) => string = (f) => f,
-  params = {}
+  params = {},
 ): Promise<[string, object]> => {
   const key = Object.keys(where)[0];
   const value = Object.values(where)[0];
 
   // object keywords
   switch (key) {
-    case "$and": {
+    case '$and': {
       const sqlFilters: string[] = [];
       for (const filter of value) {
-        const [sql, anotherParams] = await BuildWhere(filter, changeField, params);
+        const [sql, anotherParams] = await BuildWhere(
+          filter,
+          changeField,
+          params,
+        );
         if (sql.length) sqlFilters.push(sql);
         params = { ...params, ...anotherParams };
       }
-      return [`(${sqlFilters.join(" AND ")})`, params];
+      return [`(${sqlFilters.join(' AND ')})`, params];
     }
-    case "$or": {
+    case '$or': {
       const sqlFilters: string[] = [];
       for (const filter of value) {
-        const [sql, anotherParams] = await BuildWhere(filter, changeField, params);
+        const [sql, anotherParams] = await BuildWhere(
+          filter,
+          changeField,
+          params,
+        );
         if (sql.length) sqlFilters.push(sql);
         params = { ...params, ...anotherParams };
       }
-      return [`(${sqlFilters.join(" OR ")})`, params];
+      return [`(${sqlFilters.join(' OR ')})`, params];
     }
-    case "$eq": {
+    case '$eq': {
       const paramkey = await generateKey();
       return [`= :${paramkey}`, { [paramkey]: value }];
     }
-    case "$like": {
+    case '$like': {
       const paramkey = await generateKey();
       return [`like :${paramkey}`, { [paramkey]: value }];
     }

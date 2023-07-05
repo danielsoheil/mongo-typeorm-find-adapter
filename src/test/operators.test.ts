@@ -1,7 +1,7 @@
-import { it, expect, beforeEach, afterEach } from "@jest/globals";
-import { ReadQueryBuilder } from "../index";
-import { User, UserFactory } from "./models/User";
-import AppDataSource from "./DataSource";
+import { it, expect, beforeEach, afterEach } from '@jest/globals';
+import { ReadQueryBuilder } from '../index';
+import { User, UserFactory } from './models/User';
+import AppDataSource from './DataSource';
 
 beforeEach(async () => {
   await AppDataSource.initialize();
@@ -10,9 +10,9 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await AppDataSource.destroy();
-})
+});
 
-it("should filter with $eq", async function () {
+it('should filter with $eq', async function () {
   const Users = AppDataSource.getRepository(User);
 
   // create some user
@@ -20,27 +20,27 @@ it("should filter with $eq", async function () {
     await new UserFactory(AppDataSource).create();
   }
   await new UserFactory(AppDataSource).create({
-    firstName: "daniel",
-    lastName: "soheil",
+    firstName: 'daniel',
+    lastName: 'soheil',
   });
 
   {
     const [users, total] = await new ReadQueryBuilder(Users)
       .relation({ creator: true })
       .where({
-        firstName: { $eq: "daniel" },
+        firstName: { $eq: 'daniel' },
       })
       .exec(0, 10);
 
     expect(users).toMatchObject([
-      expect.objectContaining({ firstName: "daniel", lastName: "soheil" }),
+      expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
     const [users, total] = await new ReadQueryBuilder(Users)
       .relation({ creator: true })
       .where({
-        firstName: { $eq: "xxxxxx" },
+        firstName: { $eq: 'xxxxxx' },
       })
       .exec(0, 10);
 
@@ -48,7 +48,7 @@ it("should filter with $eq", async function () {
   }
 });
 
-it("should filter with $like", async function () {
+it('should filter with $like', async function () {
   const Users = AppDataSource.getRepository(User);
 
   // create some user
@@ -56,27 +56,27 @@ it("should filter with $like", async function () {
     await new UserFactory(AppDataSource).create();
   }
   await new UserFactory(AppDataSource).create({
-    firstName: "daniel",
-    lastName: "soheil",
+    firstName: 'daniel',
+    lastName: 'soheil',
   });
 
   {
     const [users, total] = await new ReadQueryBuilder(Users)
       .relation({ creator: true })
       .where({
-        firstName: { $like: "%dani%" },
+        firstName: { $like: '%dani%' },
       })
       .exec(0, 10);
 
     expect(users).toMatchObject([
-      expect.objectContaining({ firstName: "daniel", lastName: "soheil" }),
+      expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
     const [users, total] = await new ReadQueryBuilder(Users)
       .relation({ creator: true })
       .where({
-        firstName: { $like: "%xxxxxx%" },
+        firstName: { $like: '%xxxxxx%' },
       })
       .exec(0, 10);
 
@@ -84,7 +84,7 @@ it("should filter with $like", async function () {
   }
 });
 
-it("should filter with $or", async function () {
+it('should filter with $or', async function () {
   const Users = AppDataSource.getRepository(User);
 
   // create some user
@@ -92,8 +92,8 @@ it("should filter with $or", async function () {
     await new UserFactory(AppDataSource).create();
   }
   await new UserFactory(AppDataSource).create({
-    firstName: "daniel",
-    lastName: "soheil",
+    firstName: 'daniel',
+    lastName: 'soheil',
   });
 
   {
@@ -102,17 +102,17 @@ it("should filter with $or", async function () {
       .where({
         $or: [
           {
-            firstName: { $eq: "xxxxxx" },
+            firstName: { $eq: 'xxxxxx' },
           },
           {
-            lastName: { $eq: "soheil" },
+            lastName: { $eq: 'soheil' },
           },
         ],
       })
       .exec(0, 10);
 
     expect(users).toMatchObject([
-      expect.objectContaining({ firstName: "daniel", lastName: "soheil" }),
+      expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
@@ -121,22 +121,22 @@ it("should filter with $or", async function () {
       .where({
         $or: [
           {
-            firstName: { $eq: "daniel" },
+            firstName: { $eq: 'daniel' },
           },
           {
-            lastName: { $eq: "xxxxxx" },
+            lastName: { $eq: 'xxxxxx' },
           },
         ],
       })
       .exec(0, 10);
 
     expect(users).toMatchObject([
-      expect.objectContaining({ firstName: "daniel", lastName: "soheil" }),
+      expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
 });
 
-it("should filter with $and", async function () {
+it('should filter with $and', async function () {
   const Users = AppDataSource.getRepository(User);
 
   // create some user
@@ -144,8 +144,8 @@ it("should filter with $and", async function () {
     await new UserFactory(AppDataSource).create();
   }
   await new UserFactory(AppDataSource).create({
-    firstName: "daniel",
-    lastName: "soheil",
+    firstName: 'daniel',
+    lastName: 'soheil',
   });
 
   {
@@ -154,17 +154,17 @@ it("should filter with $and", async function () {
       .where({
         $and: [
           {
-            firstName: { $eq: "daniel" },
+            firstName: { $eq: 'daniel' },
           },
           {
-            lastName: { $eq: "soheil" },
+            lastName: { $eq: 'soheil' },
           },
         ],
       })
       .exec(0, 10);
 
     expect(users).toMatchObject([
-      expect.objectContaining({ firstName: "daniel", lastName: "soheil" }),
+      expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
@@ -173,10 +173,10 @@ it("should filter with $and", async function () {
       .where({
         $and: [
           {
-            firstName: { $eq: "daniel" },
+            firstName: { $eq: 'daniel' },
           },
           {
-            lastName: { $eq: "xxxxxx" },
+            lastName: { $eq: 'xxxxxx' },
           },
         ],
       })
