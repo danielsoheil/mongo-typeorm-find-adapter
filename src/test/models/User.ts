@@ -5,6 +5,8 @@ import {
   PrimaryGeneratedColumn,
   Relation,
 } from "typeorm";
+import { Factory } from "@danielsoheil/typeorm-better-factory";
+import { faker } from "@faker-js/faker";
 
 @Entity()
 export class User {
@@ -19,4 +21,12 @@ export class User {
 
   @ManyToOne(() => User, { nullable: true })
   creator: Relation<User>;
+}
+
+export class UserFactory extends Factory<User> {
+  entity = User;
+
+  firstName = faker.person.firstName();
+  lastName = faker.person.lastName();
+  creator = null;
 }

@@ -1,6 +1,6 @@
 import { it, expect, beforeEach } from "@jest/globals";
 import { ReadQueryBuilder } from "../index";
-import { User } from "./models/User";
+import { User, UserFactory } from "./models/User";
 import AppDataSource from "./DataSource";
 
 beforeEach(async () => {
@@ -11,11 +11,17 @@ it("should filter on one level relation", async function () {
   const Users = AppDataSource.getRepository(User);
 
   // create some user
-  await Users.save({ firstName: "hosein", lastName: "noshadi" });
-  const creator = await Users.save({ firstName: "daniel", lastName: "soheil" });
-  await Users.save({ firstName: "alireza", lastName: "bahrani", creator });
-  await Users.save({ firstName: "pardis", lastName: "basiri" });
-  await Users.save({ firstName: "mona", lastName: "asadi" });
+  for (const _ of [...Array(10)]) {
+    await new UserFactory(AppDataSource).create();
+  }
+  await new UserFactory(AppDataSource).create({
+    firstName: "alireza",
+    lastName: "bahrani",
+    creator: await new UserFactory(AppDataSource).create({
+      firstName: "daniel",
+      lastName: "soheil",
+    }),
+  });
 
   const [users, total] = await new ReadQueryBuilder(Users)
     .relation({ creator: true })
