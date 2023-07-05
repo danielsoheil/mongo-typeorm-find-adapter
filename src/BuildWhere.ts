@@ -10,21 +10,19 @@ const generateKey = async () => {
 };
 
 export const BuildWhere = async <T>(
-  filter: WhereStructure<T>,
+  where: WhereStructure<T>,
+  changeField: (field: string) => string = (f) => f,
   params = {}
 ): Promise<[string, object]> => {
-  const keys = Object.keys(filter);
-  const values = Object.values(filter);
-  const filters: string[] = [];
-
-  if (!keys.length || !values.length) return ["", {}];
+  const key = Object.keys(where)[0];
+  const value = Object.values(where)[0];
 
   // object keywords
-  switch (keys[0]) {
+  switch (key) {
     case "$and": {
       const sqlFilters: string[] = [];
-      for (const filter of values[0]) {
-        const [sql, anotherParams] = await BuildWhere(filter);
+      for (const filter of value) {
+        const [sql, anotherParams] = await BuildWhere(filter, changeField, params);
         if (sql.length) sqlFilters.push(sql);
         params = { ...params, ...anotherParams };
       }
@@ -32,8 +30,8 @@ export const BuildWhere = async <T>(
     }
     case "$or": {
       const sqlFilters: string[] = [];
-      for (const filter of values[0]) {
-        const [sql, anotherParams] = await BuildWhere(filter);
+      for (const filter of value) {
+        const [sql, anotherParams] = await BuildWhere(filter, changeField, params);
         if (sql.length) sqlFilters.push(sql);
         params = { ...params, ...anotherParams };
       }
@@ -41,19 +39,16 @@ export const BuildWhere = async <T>(
     }
     case "$eq": {
       const paramkey = await generateKey();
-      return [`= :${paramkey}`, { [paramkey]: values[0] }];
+      return [`= :${paramkey}`, { [paramkey]: value }];
     }
     case "$like": {
       const paramkey = await generateKey();
-      return [`like :${paramkey}`, { [paramkey]: values[0] }];
+      return [`like :${paramkey}`, { [paramkey]: value }];
     }
     default: {
-      const [sql, params] = await BuildWhere(values[0]);
-      if (!keys[0].includes(".")) {
-        return [`((entity.${keys[0]}) ${sql})`, params];
-      } else {
-        return [`((entity__entity_${keys[0]}) ${sql})`, params];
-      }
+      const [sql, anotherParams] = await BuildWhere(value, changeField, params);
+
+      return [`((${changeField(key)}) ${sql})`, anotherParams];
     }
   }
 };

@@ -1,6 +1,7 @@
 import assert from "assert";
 import { DataSource } from "typeorm";
 import { User } from "./models/User";
+import {Role} from "./models/Role";
 
 const { DB_URL, DB_ENABLE_LOGGING, DB_DROP_SCHEMA } = process.env;
 
@@ -12,7 +13,7 @@ const AppDataSource = new DataSource({
   synchronize: false,
   logging: DB_ENABLE_LOGGING === "true",
   dropSchema: true,
-  entities: [User],
+  entities: [User, Role],
   subscribers: [],
   migrations: ["migrations/*.ts"],
   connectTimeoutMS: 10000,
