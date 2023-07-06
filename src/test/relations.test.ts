@@ -1,8 +1,8 @@
 import { it, expect, beforeEach, afterEach } from '@jest/globals';
-import { ReadQueryBuilder } from '../index';
 import { User, UserFactory } from './models/User';
 import AppDataSource from './DataSource';
 import { RoleFactory } from './models/Role';
+import { addMongoDbWhere } from '../index';
 
 beforeEach(async () => {
   await AppDataSource.initialize();
@@ -29,10 +29,10 @@ it('should filter on one level relation', async function () {
     }),
   });
 
-  const [users, total] = await new ReadQueryBuilder(Users)
-    .relation({ creator: true })
-    .where({ 'creator.lastName': { $like: '%soh%' } })
-    .exec(0, 10);
+  const qb = Users.createQueryBuilder('entity');
+  qb.setFindOptions({ relations: { creator: true } });
+  await addMongoDbWhere(qb, { 'creator.lastName': { $like: '%soh%' } });
+  const [users, total] = await qb.getManyAndCount();
 
   expect(users).toMatchObject([
     expect.objectContaining({ firstName: 'alireza', lastName: 'bahrani' }),
@@ -58,10 +58,10 @@ it('should filter on two level relation', async function () {
     }),
   });
 
-  const [users, total] = await new ReadQueryBuilder(Users)
-    .relation({ role: { creator: true } })
-    .where({ 'role.creator.firstName': { $eq: 'mostafa' } })
-    .exec(0, 10);
+  const qb = Users.createQueryBuilder('entity');
+  qb.setFindOptions({ relations: { role: { creator: true } } });
+  await addMongoDbWhere(qb, { 'role.creator.firstName': { $eq: 'mostafa' } });
+  const [users, total] = await qb.getManyAndCount();
 
   expect(users).toMatchObject([
     expect.objectContaining({ firstName: 'alireza', lastName: 'bahrani' }),

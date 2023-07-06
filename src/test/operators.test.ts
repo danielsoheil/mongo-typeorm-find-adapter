@@ -1,7 +1,7 @@
 import { it, expect, beforeEach, afterEach } from '@jest/globals';
-import { ReadQueryBuilder } from '../index';
 import { User, UserFactory } from './models/User';
 import AppDataSource from './DataSource';
+import { addMongoDbWhere } from '../index';
 
 beforeEach(async () => {
   await AppDataSource.initialize();
@@ -25,24 +25,24 @@ it('should filter with $eq', async function () {
   });
 
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        firstName: { $eq: 'daniel' },
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      firstName: { $eq: 'daniel' },
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([
       expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        firstName: { $eq: 'xxxxxx' },
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      firstName: { $eq: 'xxxxxx' },
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([]);
   }
@@ -61,24 +61,24 @@ it('should filter with $like', async function () {
   });
 
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        firstName: { $like: '%dani%' },
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      firstName: { $like: '%dani%' },
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([
       expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        firstName: { $like: '%xxxxxx%' },
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      firstName: { $like: '%xxxxxx%' },
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([]);
   }
@@ -97,38 +97,38 @@ it('should filter with $or', async function () {
   });
 
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        $or: [
-          {
-            firstName: { $eq: 'xxxxxx' },
-          },
-          {
-            lastName: { $eq: 'soheil' },
-          },
-        ],
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      $or: [
+        {
+          firstName: { $eq: 'xxxxxx' },
+        },
+        {
+          lastName: { $eq: 'soheil' },
+        },
+      ],
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([
       expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        $or: [
-          {
-            firstName: { $eq: 'daniel' },
-          },
-          {
-            lastName: { $eq: 'xxxxxx' },
-          },
-        ],
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      $or: [
+        {
+          firstName: { $eq: 'daniel' },
+        },
+        {
+          lastName: { $eq: 'xxxxxx' },
+        },
+      ],
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([
       expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
@@ -149,38 +149,38 @@ it('should filter with $and', async function () {
   });
 
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        $and: [
-          {
-            firstName: { $eq: 'daniel' },
-          },
-          {
-            lastName: { $eq: 'soheil' },
-          },
-        ],
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      $and: [
+        {
+          firstName: { $eq: 'daniel' },
+        },
+        {
+          lastName: { $eq: 'soheil' },
+        },
+      ],
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([
       expect.objectContaining({ firstName: 'daniel', lastName: 'soheil' }),
     ]);
   }
   {
-    const [users, total] = await new ReadQueryBuilder(Users)
-      .relation({ creator: true })
-      .where({
-        $and: [
-          {
-            firstName: { $eq: 'daniel' },
-          },
-          {
-            lastName: { $eq: 'xxxxxx' },
-          },
-        ],
-      })
-      .exec(0, 10);
+    const qb = Users.createQueryBuilder('entity');
+    qb.setFindOptions({ relations: { creator: true } });
+    await addMongoDbWhere(qb, {
+      $and: [
+        {
+          firstName: { $eq: 'daniel' },
+        },
+        {
+          lastName: { $eq: 'xxxxxx' },
+        },
+      ],
+    });
+    const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([]);
   }
