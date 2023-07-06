@@ -2,6 +2,7 @@ import assert from 'assert';
 import { DataSource } from 'typeorm';
 import { User } from './models/User';
 import { Role } from './models/Role';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 const { DB_URL, DB_ENABLE_LOGGING, DB_DROP_SCHEMA } = process.env;
 
@@ -16,6 +17,7 @@ const AppDataSource = new DataSource({
   entities: [User, Role],
   subscribers: [],
   migrations: ['migrations/*.ts'],
+  namingStrategy: new SnakeNamingStrategy(),
   connectTimeoutMS: 10000,
 });
 
