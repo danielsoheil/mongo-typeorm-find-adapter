@@ -25,4 +25,9 @@ export class MongoFind<T extends ObjectLiteral> {
     const [sql, params] = await BuildWhere(where, this.getOnFieldHook());
     this.queryBuilder.andWhere(sql, params);
   }
+
+  async orWhere<T extends ObjectLiteral>(where: WhereStructure<T>) {
+    const [sql, params] = await BuildWhere(where, this.getOnFieldHook());
+    this.queryBuilder.orWhere(sql, params);
+  }
 }
