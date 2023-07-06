@@ -3,7 +3,7 @@ import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';
 import AppDataSource from './test/DataSource';
 
-export async function addMongoDbWhere<T extends ObjectLiteral>(
+export async function mongoWhere<T extends ObjectLiteral>(
   queryBuilder: SelectQueryBuilder<T>,
   where: WhereStructure<T>,
 ) {
