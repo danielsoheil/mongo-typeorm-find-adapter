@@ -38,18 +38,20 @@ const onField = (field: string) => {
   return field;
 };
 
-export async function mongoWhere<T extends ObjectLiteral>(
-  queryBuilder: SelectQueryBuilder<T>,
-  where: WhereStructure<T>,
-) {
-  const [sql, params] = await BuildWhere(where, onField);
-  queryBuilder.where(sql, params);
-}
+export class MongoFind<T extends ObjectLiteral> {
+  queryBuilder: SelectQueryBuilder<T>;
 
-export async function andMongoWhere<T extends ObjectLiteral>(
-  queryBuilder: SelectQueryBuilder<T>,
-  where: WhereStructure<T>,
-) {
-  const [sql, params] = await BuildWhere(where, onField);
-  queryBuilder.andWhere(sql, params);
+  constructor(queryBuilder: SelectQueryBuilder<T>) {
+    this.queryBuilder = queryBuilder;
+  }
+
+  async where<T extends ObjectLiteral>(where: WhereStructure<T>) {
+    const [sql, params] = await BuildWhere(where, onField);
+    this.queryBuilder.where(sql, params);
+  }
+
+  async andWhere<T extends ObjectLiteral>(where: WhereStructure<T>) {
+    const [sql, params] = await BuildWhere(where, onField);
+    this.queryBuilder.andWhere(sql, params);
+  }
 }

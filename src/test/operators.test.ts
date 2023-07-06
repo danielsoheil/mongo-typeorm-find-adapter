@@ -1,7 +1,7 @@
 import { it, expect, beforeEach, afterEach } from '@jest/globals';
 import { User, UserFactory } from './models/User';
 import AppDataSource from './DataSource';
-import { mongoWhere } from '../index';
+import { MongoFind } from '../index';
 
 beforeEach(async () => {
   await AppDataSource.initialize();
@@ -27,7 +27,8 @@ it('should filter with $eq', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       firstName: { $eq: 'daniel' },
     });
     const [users, total] = await qb.getManyAndCount();
@@ -39,7 +40,8 @@ it('should filter with $eq', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       firstName: { $eq: 'xxxxxx' },
     });
     const [users, total] = await qb.getManyAndCount();
@@ -63,7 +65,8 @@ it('should filter with $like', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       firstName: { $like: '%dani%' },
     });
     const [users, total] = await qb.getManyAndCount();
@@ -75,7 +78,8 @@ it('should filter with $like', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       firstName: { $like: '%xxxxxx%' },
     });
     const [users, total] = await qb.getManyAndCount();
@@ -99,7 +103,8 @@ it('should filter with $or', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       $or: [
         {
           firstName: { $eq: 'xxxxxx' },
@@ -118,7 +123,8 @@ it('should filter with $or', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       $or: [
         {
           firstName: { $eq: 'daniel' },
@@ -151,7 +157,8 @@ it('should filter with $and', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       $and: [
         {
           firstName: { $eq: 'daniel' },
@@ -170,7 +177,8 @@ it('should filter with $and', async function () {
   {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
-    await mongoWhere(qb, {
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where( {
       $and: [
         {
           firstName: { $eq: 'daniel' },

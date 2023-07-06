@@ -2,7 +2,7 @@ import { it, expect, beforeEach, afterEach } from '@jest/globals';
 import { User, UserFactory } from './models/User';
 import AppDataSource from './DataSource';
 import { RoleFactory } from './models/Role';
-import { mongoWhere } from '../index';
+import { MongoFind } from '../index';
 
 beforeEach(async () => {
   await AppDataSource.initialize();
@@ -31,7 +31,8 @@ it('should filter on one level relation', async function () {
 
   const qb = Users.createQueryBuilder('entity');
   qb.setFindOptions({ relations: { creator: true } });
-  await mongoWhere(qb, { 'creator.lastName': { $like: '%soh%' } });
+  const mongoFind = new MongoFind(qb);
+  await mongoFind.where({ 'creator.lastName': { $like: '%soh%' } });
   const [users, total] = await qb.getManyAndCount();
 
   expect(users).toMatchObject([
@@ -60,7 +61,8 @@ it('should filter on two level relation', async function () {
 
   const qb = Users.createQueryBuilder('entity');
   qb.setFindOptions({ relations: { role: { creator: true } } });
-  await mongoWhere(qb, { 'role.creator.firstName': { $eq: 'mostafa' } });
+  const mongoFind = new MongoFind(qb);
+  await mongoFind.where({ 'role.creator.firstName': { $eq: 'mostafa' } });
   const [users, total] = await qb.getManyAndCount();
 
   expect(users).toMatchObject([
