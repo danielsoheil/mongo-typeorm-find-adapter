@@ -14,9 +14,16 @@ export const BuildWhere = async <T>(
   onField: (field: string) => string,
   params = {},
 ): Promise<[string, object]> => {
-  const key = Object.keys(where)[0];
-  const value = Object.values(where)[0];
+  if (Object.keys(where).length != 1) {
+    const [keys, values] = [Object.keys(where), Object.values(where)];
+    const $and: {}[] = [];
+    for (const index in keys) {
+      $and.push({ [keys[index]]: values[index] });
+    }
+    return BuildWhere({ $and }, onField, params);
+  }
 
+  const [key, value] = [Object.keys(where)[0], Object.values(where)[0]];
   // object keywords
   switch (key) {
     case '$and': {
@@ -46,8 +53,14 @@ export const BuildWhere = async <T>(
       return [`like :${paramkey}`, { [paramkey]: value }];
     }
     default: {
-      const [sql, anotherParams] = await BuildWhere(value, onField, params);
+      let match: WhereStructure<T>;
+      if (typeof value === 'string') {
+        match = { $eq: value };
+      } else {
+        match = value;
+      }
 
+      const [sql, anotherParams] = await BuildWhere(match, onField, params);
       return [`((${onField(key)}) ${sql})`, anotherParams];
     }
   }
