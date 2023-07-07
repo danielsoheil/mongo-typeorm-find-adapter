@@ -39,7 +39,7 @@ it('should filter with another thing just like $eq', async function () {
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
     const mongoFind = new MongoFind(qb);
-    await mongoFind.where({ firstName: { $eq: 'xxxxxx' } });
+    await mongoFind.where({ firstName: 'xxxxxx' });
     const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([]);
@@ -73,7 +73,7 @@ it('should filter with multiple keys in object (just like $and)', async function
     const qb = Users.createQueryBuilder('entity');
     qb.setFindOptions({ relations: { creator: true } });
     const mongoFind = new MongoFind(qb);
-    await mongoFind.where({ firstName: { $eq: 'xxxxxx' } });
+    await mongoFind.where({ firstName: 'daniel', lastName: 'xxxxxx' });
     const [users, total] = await qb.getManyAndCount();
 
     expect(users).toMatchObject([]);
