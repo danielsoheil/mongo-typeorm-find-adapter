@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from 'util';
+
 type field = { $eq: string } | { $like: string };
 export type WhereStructure<T> =
   | { [K in keyof T]: field }
@@ -14,7 +16,9 @@ export const BuildWhere = async <T>(
   onField: (field: string) => string,
   params = {},
 ): Promise<[string, object]> => {
-  if (Object.keys(where).length != 1) {
+  if (Object.keys(where).length == 0) {
+    return ['', {}];
+  } else if (Object.keys(where).length > 1) {
     const [keys, values] = [Object.keys(where), Object.values(where)];
     const $and: {}[] = [];
     for (const index in keys) {

@@ -79,3 +79,21 @@ it('should filter with multiple keys in object (just like $and)', async function
     expect(users).toMatchObject([]);
   }
 });
+
+it('should not filter with empty object', async function () {
+  const Users = AppDataSource.getRepository(User);
+
+  // create some user
+  for (const _ of [...Array(10)]) {
+    await new UserFactory(AppDataSource).create();
+  }
+
+  {
+    const qb = Users.createQueryBuilder('entity');
+    const mongoFind = new MongoFind(qb);
+    await mongoFind.where({});
+    const [users, total] = await qb.getManyAndCount();
+
+    expect(users).toHaveLength(10);
+  }
+});
